@@ -1,0 +1,53 @@
+openapi: 3.1.0
+info:
+  title: DIGGIT API
+  version: 0.2.0
+  description: Environmental remediation research and screening API.
+servers:
+  - url: http://localhost:8000
+paths:
+  /health:
+    get:
+      operationId: healthCheck
+      summary: Check DIGGIT API status
+      responses:
+        "200":
+          description: Service status
+  /api/v1/horticulture/screen:
+    post:
+      operationId: screenReconstitutedSubstrate
+      summary: Run provisional horticulture substrate screening
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                ph: {type: number, minimum: 0, maximum: 14}
+                ec_ds_m: {type: number, minimum: 0}
+                organic_matter_pct: {type: number, minimum: 0, maximum: 100}
+                water_holding_capacity_pct: {type: number, minimum: 0, maximum: 100}
+                bulk_density_g_cm3: {type: number, exclusiveMinimum: 0}
+                baseline_germination_pct: {type: number, minimum: 0, maximum: 100}
+                contaminant_status: {type: string, enum: [unknown, detected, screened]}
+                plant_function: {type: string, enum: [native, wetland, woody]}
+      responses:
+        "200":
+          description: Screening estimate with warnings
+  /api/v1/sculpture/carbonate-estimate:
+    post:
+      operationId: estimateCarbonateDeposition
+      summary: Calculate theoretical carbonate deposition from captured CO2
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                co2_feed_g_day: {type: number, minimum: 0}
+                capture_efficiency_pct: {type: number, minimum: 0, maximum: 100}
+      responses:
+        "200":
+          description: Stoichiometric upper-bound estimate and caveats
