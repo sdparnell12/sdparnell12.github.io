@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>DIGGIT — Environment Remediation Solutions Within Reach</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/maplibre-gl@4.7.1/dist/maplibre-gl.css">
+<style>
+:root{--bg:rgb(17,20,22);--pri:rgb(144,200,217);--tx:rgb(213,223,226);--mu:rgb(120,135,141);--bd:rgb(45,57,61);--c1:rgb(137,198,218);--c2:rgb(130,201,176);--c3:rgb(220,180,120);--c4:rgb(178,150,206);--bad:rgb(214,120,110);--mono:"DM Mono",ui-monospace,monospace;--disp:Futura,"Futura PT","Century Gothic",sans-serif;color-scheme:dark}
+*{box-sizing:border-box}html{scroll-padding-top:72px}
+body{margin:0;background:radial-gradient(at 78% -15%,rgba(77,142,164,.1),transparent 34%),var(--bg);color:var(--tx);font:13px/1.6 Inter,system-ui,sans-serif;min-height:100dvh;padding-bottom:env(safe-area-inset-bottom,0px)}
+.mono{font-family:var(--mono)}
+.topbar{position:sticky;top:0;z-index:10;display:flex;justify-content:space-between;align-items:center;height:calc(64px + env(safe-area-inset-top,0px));padding:env(safe-area-inset-top,0px) clamp(16px,4vw,64px) 0;background:rgba(17,20,22,.86);backdrop-filter:blur(18px);border-bottom:1px solid rgba(174,204,218,.11)}
+.brand{display:flex;gap:12px;align-items:center}
+.mark{display:flex;align-items:flex-end;gap:3px;width:29px;height:29px;padding:5px;border:1px solid rgba(137,198,218,.45);border-radius:5px;transform:skew(-8deg)}
+.mark i{width:4px;background:var(--c1);border-radius:3px}.mark i:nth-child(1){height:9px;opacity:.6}.mark i:nth-child(2){height:15px}.mark i:nth-child(3){height:11px;opacity:.8}
+.bn{font:700 18px/1 var(--disp);letter-spacing:.12em}.bn b{color:var(--pri)}
+.bc{font:8px/1.35 var(--mono);color:var(--mu);letter-spacing:.09em;margin-top:5px;max-width:265px}
+.tc{font:10px var(--mono);letter-spacing:.13em;color:rgb(166,179,184);display:flex;gap:10px;align-items:center}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--c2);box-shadow:0 0 0 3px rgba(130,201,176,.1)}
+.workspace{display:grid;grid-template-columns:220px minmax(0,1fr);width:min(1460px,100%);margin:auto}
+.rail{border-right:1px solid rgba(174,204,218,.1);padding:34px 20px 22px;min-height:calc(100dvh - 64px);display:flex;flex-direction:column}
+.kick{font:9px var(--mono);letter-spacing:.16em;color:rgb(101,117,124);margin:18px 0 10px 10px}
+.item{padding:9px 11px;border-radius:5px;color:rgb(126,141,146);font-size:12px}.item.on{color:rgb(180,217,229);background:rgba(141,201,221,.09)}
+.rail strong{display:block;font-size:12px;margin:0 10px;color:rgb(196,208,212)}.rail small{display:block;margin:2px 10px;color:var(--mu);font-size:10px}
+.ou{display:grid;grid-template-columns:9px 46px 1fr;gap:8px;align-items:center;margin:10px 8px;font:10px var(--mono);color:rgb(163,176,180)}
+.ou i{width:5px;height:5px;border-radius:50%;background:rgb(115,174,190)}.ou small{margin:0;text-align:right;font:9px Inter}
+.note{margin-top:auto;padding:12px 8px 0;font-size:9px;color:rgb(119,134,139);line-height:1.65}
+.col{min-width:0;padding:40px clamp(16px,5vw,78px) 34px}
+.head{max-width:1050px;margin:0 auto 28px}
+.eb{display:flex;align-items:center;gap:10px;font:10px var(--mono);letter-spacing:.11em;color:rgb(141,157,162)}.eb i{width:24px;height:1px;background:var(--c1)}
+h1{font:700 clamp(38px,5.1vw,64px)/.99 var(--disp);letter-spacing:-.06em;margin:16px 0 12px;color:rgb(224,230,232)}h1 em{font-style:normal;color:rgb(144,199,216)}
+.head p{max-width:580px;margin:0;color:rgb(135,150,156);line-height:1.85}
+.panel{max-width:1050px;margin:0 auto 16px;padding:20px 22px;background:linear-gradient(135deg,rgba(28,36,39,.97),rgba(22,28,30,.98));border:1px solid var(--bd);border-radius:8px;box-shadow:0 16px 45px rgba(0,0,0,.12)}
+.tag{font:10px var(--mono);letter-spacing:.11em;color:rgb(141,157,162)}.tag b{color:rgb(136,197,215);font-weight:400}
+h2{font:600 20px/1.2 var(--disp);margin:8px 0 14px;letter-spacing:-.02em}
+.ph{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+.ref{font:9px var(--mono);letter-spacing:.1em;color:var(--c3);white-space:nowrap}
+.geo{display:grid;grid-template-columns:minmax(0,1fr) 260px;gap:16px}
+#map{height:480px;border-radius:6px;border:1px solid var(--bd);overflow:hidden}
+.lbl{margin-top:8px;font-size:11px;color:var(--mu)}.lbl strong{color:rgb(196,208,212);display:block}
+.lt{font:9px var(--mono);letter-spacing:.12em;color:rgb(101,117,124);margin:0 0 8px;display:flex;justify-content:space-between;gap:6px}
+.row{display:flex;justify-content:space-between;gap:8px;align-items:center;padding:7px 0;border-bottom:1px solid rgba(166,195,206,.1);font-size:11px}
+.row label{display:flex;gap:7px;align-items:center;cursor:pointer}.row span.s{font-size:10px;color:var(--mu);text-align:right}
+.bt{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
+button{font:inherit;font-size:11px;padding:8px 12px;color:rgb(182,196,201);background:rgb(22,29,32);border:1px solid rgb(48,59,64);border-radius:4px;cursor:pointer}
+button:hover:not(:disabled){background:rgb(28,39,43);border-color:rgb(72,97,106)}
+button.p{background:var(--pri);color:rgb(23,34,39);border-color:var(--pri);font-weight:700}
+button:disabled{opacity:.44;cursor:not-allowed}
+:focus-visible{outline:2px solid var(--pri);outline-offset:1px}
+.prov{display:flex;flex-wrap:wrap;gap:10px;margin-top:10px;font-size:10px;color:var(--mu)}.prov i{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:5px}
+.g2{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+label.f{display:flex;flex-direction:column;gap:4px;font:9px var(--mono);letter-spacing:.08em;color:rgb(117,132,138)}
+input,select{font:inherit;font-size:12px;color:rgb(213,223,226);background:rgb(21,28,30);border:1px solid rgb(49,60,64);border-radius:4px;padding:7px 8px;width:100%}
+input[type=checkbox],input[type=radio]{width:auto}
+.st{display:flex;gap:9px;padding:7px 0;border-bottom:1px solid rgba(166,195,206,.1);font-size:12px}.st small{display:block;color:var(--mu);font-size:10px}
+details{margin:12px 0}summary{cursor:pointer;color:var(--pri);font-size:11px}
+.bar{display:flex;height:20px;border:1px solid var(--bd);border-radius:4px;overflow:hidden;margin:10px 0}
+table{width:100%;border-collapse:collapse;font-size:11px}th,td{text-align:left;padding:5px 6px;border-bottom:1px solid rgba(166,195,206,.1)}td.n,th.n{text-align:right;font-family:var(--mono)}
+.w{border-left:2px solid var(--c3);background:rgba(159,123,78,.07);padding:8px 10px;margin:8px 0;font-size:11px;color:rgb(208,179,142)}.w.b{border-color:var(--bad);color:var(--bad)}
+.cap{font-size:10px;color:var(--mu)}
+.l3{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin:10px 0}.l3>div{border:1px solid var(--bd);border-radius:5px;padding:9px 10px;font-size:11px}.l3 b{display:block;font:9px var(--mono);color:var(--mu);margin-bottom:3px}
+.maplibregl-ctrl-attrib{font-size:9px}
+@media(max-width:900px){.workspace{grid-template-columns:1fr}.rail{display:none}.geo{grid-template-columns:1fr}#map{height:380px}.tc{display:none}}
+@media(prefers-reduced-motion:no-preference){.panel{animation:in .5s cubic-bezier(.2,.7,.2,1) both}@keyframes in{from{opacity:0;transform:translateY(8px)}}}
+</style>
+</head>
+<body>
+<header class="topbar"><div class="brand"><div class="mark"><i></i><i></i><i></i></div><div><div class="bn">DIGGIT<b>.</b></div><div class="bc">DIGITAL INTERFACE FOR GRAPHING GEOCHEMICAL INTERPOLATION TREATMENTS</div></div></div><div class="tc"><span class="dot"></span>DEL AMO PILOT <span style="color:rgb(68,80,86)">/</span> ERP</div></header>
+<div class="workspace">
+<aside class="rail"><div class="kick" style="margin-top:0">RESEARCH DESK</div><div class="item on">Plot analyzer</div><div class="kick">PILOT INDEX</div><div class="item">Site overview</div><div class="item">Source library</div>
+<div class="kick">ACTIVE SITE</div><strong>Del Amo Superfund Site</strong><small class="mono" style="color:rgb(136,184,200)">CAD029544731</small><small>Los Angeles, CA</small>
+<div class="kick">OPERABLE UNITS</div><div class="ou"><i></i><span>OU-1</span><small>Soil and NAPL</small></div><div class="ou"><i></i><span>OU-2</span><small>Former Waste Pits</small></div><div class="ou"><i></i><span>OU-3G</span><small>Dual-Site Groundwater</small></div>
+<div class="note">Decision support only.<br>Not field authorization.</div></aside>
+<div class="col">
+<div class="head"><div class="eb"><i></i>DEL AMO / CALIFORNIA</div><h1>Environment Remediation<br><em>Solutions Within Reach.</em></h1><p>Data driven ecological remediation strategies for mitigation of geochemical dysfunction.</p></div>
+
+<section class="panel"><div class="ph"><div><span class="tag"><b>MAP</b> GEOSPATIAL RESEARCH</span><h2>Del Amo site view</h2></div><span class="ref">REGIONAL REFERENCE ONLY</span></div>
+<div class="geo"><div><div id="map"></div><div class="lbl"><strong>Harbor Gateway, Los Angeles</strong>Approximate viewport; no official project boundary is loaded.</div>
+<div class="bt"><button id="bDraw" class="p">Draw plot</button><button id="bFin" disabled>Finish plot</button><button id="bClr">Clear plot</button><button id="bS2">Load Sentinel-2 red edge</button></div><div class="cap" id="area">No plot drawn.</div></div>
+<aside><div class="lt">BASEMAP</div>
+<div class="row"><label><input type="radio" name="bm" value="img" checked> USGS Imagery</label></div><div class="row"><label><input type="radio" name="bm" value="topo"> USGS Topo</label></div>
+<div class="lt" style="margin-top:14px">LAYERS <span>MEASURED: 0</span></div>
+<div class="row"><label><input type="checkbox" id="lRel"> Shaded relief</label><span class="s">USGS</span></div>
+<div class="row"><label><input type="checkbox" id="lHyd"> Hydrography</label><span class="s">USGS</span></div>
+<div class="row"><label><input type="checkbox" id="lNd" checked disabled> Red-edge NDRE</label><span class="s" id="s2s">Not loaded</span></div>
+<div class="row"><span>Site and OU boundaries</span><span class="s">Not loaded</span></div><div class="row"><span>Sampling locations</span><span class="s">Not loaded</span></div><div class="row"><span>Contaminant distribution</span><span class="s">Not loaded</span></div>
+<p class="cap">No boundary, sample, or surface is drawn until its source and provenance are imported and reviewed. NDRE flags vegetation stress; it does not measure concentration.</p>
+<div class="prov"><span><i style="background:var(--c1)"></i>Measured</span><span><i style="background:var(--c2)"></i>Remote sensing</span><span><i style="background:var(--c3)"></i>Interpolated</span><span><i style="background:var(--c4)"></i>Model prediction</span></div></aside></div></section>
+
+<section class="panel"><span class="tag"><b>01</b> SCENARIO</span><h2>Frame the plot</h2>
+<div class="g2"><label class="f">TARGET<select id="cmp"></select></label><label class="f">UNIT (USER-SELECTED)<select id="ou"><option>OU-1</option><option>OU-2</option><option>OU-3G</option></select></label>
+<label class="f">SOIL CONC. (MG/KG)<input id="c0" type="number" min="0" step="any" value="100"></label><label class="f">DEPTH (M)<input id="dep" type="number" min=".1" step="any" value="1.5"></label>
+<label class="f">BULK DENSITY (G/CM³)<input id="rho" type="number" min=".5" step="any" value="1.4"></label><label class="f">ORGANIC CARBON FRACTION<input id="foc" type="number" min=".0001" step="any" value=".02"></label></div>
+<div id="ouW"></div><p class="cap">Defaults are illustrative scenario values, not site data. Replace with laboratory results.</p>
+<div class="lt" style="margin-top:16px">TREATMENT TRAIN</div><div id="train"></div>
+<details><summary>Scenario assumptions (no evidence loaded)</summary><div class="g2" style="margin-top:10px">
+<label class="f">WASH TRANSFER %<input id="aT" type="number" value="60"></label><label class="f">SORBENT CAPTURE %<input id="aC" type="number" value="85"></label><label class="f">ELECTROCHEM. CONVERSION %<input id="aE" type="number" value="40"></label><label class="f">COMPOST CONVERSION %<input id="aK" type="number" value="15"></label><label class="f">PORE-WATER TURNOVERS<input id="aN" type="number" value="5"></label><label class="f">PLANT EFFECTIVENESS %<input id="aF" type="number" value="50"></label><label class="f">WATER CONTENT (V/V)<input id="aTh" type="number" step=".01" value=".25"></label><label class="f">MEASURED RESIDUAL (MG/KG)<input id="meas" type="number" min="0" step="any"></label></div>
+<label class="row" style="justify-content:flex-start;gap:8px;margin-top:8px"><input type="checkbox" id="ver"> Transformation products verified by analysis</label></details>
+<div class="bt"><button id="bRun" class="p">Run analysis</button></div></section>
+
+<section class="panel" id="res"><span class="tag"><b>02</b> RESULTS</span><h2>Evidence brief</h2><p class="cap">Draw a plot, set the scenario, then run the analysis. The desk does not invent missing measurements.</p></section>
+</div></div>
+<script src="https://cdn.jsdelivr.net/npm/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/geotiff@2.1.3/dist-browser/geotiff.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/proj4@2.12.1/dist/proj4.js"></script>
+<script>
+(function(){
+var $=function(i){return document.getElementById(i)};
+var C=[["BENZ","Benzene","71-43-2",2.0,1,"Established bacterial pathway literature; aerobic and anaerobic routes differ."],["EBENZ","Ethylbenzene","100-41-4",2.6,1,"Established pathway literature; keep separate from benzene evidence."],["NAPH","Naphthalene","91-20-3",3.1,1,"Strong pathway literature; fungal transformation reported."],["PHEN","Phenanthrene","85-01-8",4.2,0,"Established bacterial and fungal transformation literature."],["CHRY","Chrysene","218-01-9",5.3,0,"High-molecular-weight PAH evidence; strain-specific validation needed."],["BAP","Benzo[a]pyrene","50-32-8",5.9,0,"Transformation evidence; mineralization needs verification."]];
+var S=[["contain","Temporary containment enclosure","Controls vapor and particulate release."],["excav","Contained excavation","Removes soil for ex situ treatment."],["sorb","Sorbent capture","Zeolite sieve, porous polymer or GAC. Large PAHs: verify pore access."],["wash","Soil washing or bathing","Phase transfer into washwater, not destruction."],["ec","Electrochemical hydrogenation","Converts captured and washwater mass; products need verification."],["comp","Remedial composting layer","Biological transformation of residual soil mass."],["fill","Backfill and differential deposit","Sequencing only; no mass effect modeled."],["phyto","Phytoculture and rhizosphere recovery","Unlocks after containment, excavation, and sorbent or washing."]];
+$("cmp").innerHTML=C.map(function(c,i){return "<option value=\""+i+"\">"+c[1]+" ("+c[2]+")</option>"}).join("");
+$("train").innerHTML=S.map(function(s,i){return "<label class=\"st\"><input type=\"checkbox\" id=\"s_"+s[0]+"\""+(i<3?" checked":"")+"><span>"+s[1]+"<small>"+s[2]+"</small></span></label>"}).join("");
+function on(k){return $("s_"+k).checked}
+function gate(){var ok=on("contain")&&on("excav")&&(on("sorb")||on("wash"));$("s_phyto").disabled=!ok;if(!ok)$("s_phyto").checked=false;var g=$("ou").value==="OU-3G";$("bRun").disabled=g;$("ouW").innerHTML=g?"<div class=\"w b\">OU-3G is groundwater, a separate system. The soil-plot model is disabled so groundwater is never merged into soil results.</div>":""}
+$("train").addEventListener("change",gate);$("ou").onchange=gate;gate();
+
+/* ---- Map: USGS National Map layers ---- */
+var T=function(n){return ["https://basemap.nationalmap.gov/arcgis/rest/services/"+n+"/MapServer/tile/{z}/{y}/{x}"]};
+var A="USGS The National Map";
+var map=new maplibregl.Map({container:"map",center:[-118.30,33.838],zoom:14,cooperativeGestures:true,style:{version:8,sources:{
+ img:{type:"raster",tiles:T("USGSImageryOnly"),tileSize:256,maxzoom:16,attribution:A},topo:{type:"raster",tiles:T("USGSTopo"),tileSize:256,maxzoom:16,attribution:A},
+ rel:{type:"raster",tiles:T("USGSShadedReliefOnly"),tileSize:256,maxzoom:15,attribution:A},hyd:{type:"raster",tiles:T("USGSHydroCached"),tileSize:256,maxzoom:16,attribution:A}},
+ layers:[{id:"img",type:"raster",source:"img"},{id:"topo",type:"raster",source:"topo",layout:{visibility:"none"}},{id:"rel",type:"raster",source:"rel",paint:{"raster-opacity":.55},layout:{visibility:"none"}},{id:"hyd",type:"raster",source:"hyd",layout:{visibility:"none"}}]}});
+map.addControl(new maplibregl.NavigationControl({showCompass:false}),"top-right");
+function vis(id,v){if(map.getLayer(id))map.setLayoutProperty(id,"visibility",v?"visible":"none")}
+document.querySelectorAll("input[name=bm]").forEach(function(r){r.onchange=function(){vis("img",r.value==="img"&&r.checked);vis("topo",r.value==="topo"&&r.checked)}});
+$("lRel").onchange=function(){vis("rel",this.checked)};$("lHyd").onchange=function(){vis("hyd",this.checked)};$("lNd").onchange=function(){vis("ndre",this.checked)};
+
+/* ---- Plot drawing on the map ---- */
+var pts=[],closed=false,drawing=false;
+var empty={type:"FeatureCollection",features:[]};
+map.on("load",function(){map.addSource("plot",{type:"geojson",data:empty});
+ map.addLayer({id:"plotFill",type:"fill",source:"plot",filter:["==","$type","Polygon"],paint:{"fill-color":"#b296ce","fill-opacity":.3}});
+ map.addLayer({id:"plotLine",type:"line",source:"plot",paint:{"line-color":"#b296ce","line-width":2}});
+ map.addLayer({id:"plotPts",type:"circle",source:"plot",filter:["==","$type","Point"],paint:{"circle-radius":4,"circle-color":"#b296ce"}})});
+function m2(){if(pts.length<3)return 0;var la=pts.reduce(function(a,p){return a+p[1]},0)/pts.length,kx=111320*Math.cos(la*Math.PI/180),ky=110540,a=0;for(var i=0;i<pts.length;i++){var j=(i+1)%pts.length;a+=pts[i][0]*kx*pts[j][1]*ky-pts[j][0]*kx*pts[i][1]*ky}return Math.abs(a)/2}
+function show(){var f=[];if(pts.length>=3&&closed)f.push({type:"Feature",geometry:{type:"Polygon",coordinates:[pts.concat([pts[0]])]}});else if(pts.length>1)f.push({type:"Feature",geometry:{type:"LineString",coordinates:pts}});pts.forEach(function(p){f.push({type:"Feature",geometry:{type:"Point",coordinates:p}})});var s=map.getSource("plot");if(s)s.setData({type:"FeatureCollection",features:f});
+ $("bFin").disabled=!(drawing&&pts.length>=3);$("area").textContent=closed?"Plot area: "+Math.round(m2()).toLocaleString()+" m²":(pts.length?"Drawing: "+pts.length+" points":"No plot drawn.")}
+map.on("click",function(e){if(!drawing)return;pts.push([e.lngLat.lng,e.lngLat.lat]);show()});
+$("bDraw").onclick=function(){pts=[];closed=false;drawing=true;map.getCanvas().style.cursor="crosshair";show()};
+$("bFin").onclick=function(){if(pts.length>=3){closed=true;drawing=false;map.getCanvas().style.cursor="";show()}};
+$("bClr").onclick=function(){pts=[];closed=false;drawing=false;map.getCanvas().style.cursor="";show()};
+
+/* ---- Sentinel-2 red-edge NDRE via Earth Search STAC + COG windows ---- */
+var s2={};
+function ramp(v){var t=Math.max(0,Math.min(1,(v+.1)/.7));var r=t<.5?200-t*200:100-(t-.5)*200,g=60+t*170,b=t<.5?70+t*80:110-(t-.5)*60;return [r,g,b]}
+function inPoly(x,y,P){var c=false;for(var i=0,j=P.length-1;i<P.length;j=i++){if(((P[i][1]>y)!==(P[j][1]>y))&&(x<(P[j][0]-P[i][0])*(y-P[i][1])/(P[j][1]-P[i][1])+P[i][0]))c=!c}return c}
+$("bS2").onclick=async function(){
+ var st=$("s2s");st.textContent="Searching…";$("bS2").disabled=true;
+ try{
+ var b=map.getBounds(),d1=new Date(Date.now()-120*864e5).toISOString().slice(0,10),d2=new Date().toISOString().slice(0,10);
+ var r=await fetch("https://earth-search.aws.element84.com/v1/search",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({collections:["sentinel-2-l2a"],bbox:[b.getWest(),b.getSouth(),b.getEast(),b.getNorth()],datetime:d1+"T00:00:00Z/"+d2+"T23:59:59Z",limit:1,query:{"eo:cloud_cover":{lt:20}},sortby:[{field:"properties.datetime",direction:"desc"}]})});
+ var it=(await r.json()).features[0];if(!it)throw new Error("No scene under 20% cloud in the last 120 days");
+ var ep=it.properties["proj:epsg"]||(it.properties["proj:code"]||"").replace("EPSG:","");var zone=ep%100,def="+proj=utm +zone="+zone+" +datum=WGS84 +units=m"+(String(ep).slice(0,3)==="327"?" +south":"");
+ var W=proj4("EPSG:4326",def),inv=proj4(def,"EPSG:4326");
+ var ia=await (await GeoTIFF.fromUrl(it.assets.nir08.href)).getImage(),ib=await (await GeoTIFF.fromUrl(it.assets.rededge1.href)).getImage();
+ var bb=ia.getBoundingBox(),res=ia.getResolution()[0],c=[W.forward([b.getWest(),b.getSouth()]),W.forward([b.getEast(),b.getNorth()])];
+ var x0=Math.max(0,Math.floor((c[0][0]-bb[0])/res)),x1=Math.min(ia.getWidth(),Math.ceil((c[1][0]-bb[0])/res)),y0=Math.max(0,Math.floor((bb[3]-c[1][1])/res)),y1=Math.min(ia.getHeight(),Math.ceil((bb[3]-c[0][1])/res));
+ if(x1<=x0||y1<=y0)throw new Error("Scene does not cover this view");
+ var w=Math.min(x1-x0,900),h=Math.min(y1-y0,900),o={window:[x0,y0,x1,y1],width:w,height:h,resampleMethod:"nearest",interleave:false};
+ var N=(await ia.readRasters(o))[0],E=(await ib.readRasters(o))[0],cv=document.createElement("canvas");cv.width=w;cv.width=w;cv.height=h;var g=cv.getContext("2d"),im=g.createImageData(w,h),sum=0,n=0,P=closed?pts.map(function(p){return W.forward(p)}):null,sx=(x1-x0)/w,sy=(y1-y0)/h;
+ for(var k=0;k<w*h;k++){var nn=(N[k]-1000)/1e4,ee=(E[k]-1000)/1e4;if(N[k]===0||E[k]===0||nn+ee<=0){continue}var v=(nn-ee)/(nn+ee),q=ramp(v);im.data[k*4]=q[0];im.data[k*4+1]=q[1];im.data[k*4+2]=q[2];im.data[k*4+3]=190;
+  if(P){var px=bb[0]+(x0+(k%w+.5)*sx)*res,py=bb[3]-(y0+(Math.floor(k/w)+.5)*sy)*res;if(inPoly(px,py,P)){sum+=v;n++}}}
+ g.putImageData(im,0,0);var X0=bb[0]+x0*res,X1=bb[0]+x1*res,Yt=bb[3]-y0*res,Yb=bb[3]-y1*res,co=[inv.forward([X0,Yt]),inv.forward([X1,Yt]),inv.forward([X1,Yb]),inv.forward([X0,Yb])],url=cv.toDataURL();
+ if(map.getSource("ndre"))map.getSource("ndre").updateImage({url:url,coordinates:co});else{map.addSource("ndre",{type:"image",url:url,coordinates:co,attribution:"Contains modified Copernicus Sentinel data"});map.addLayer({id:"ndre",type:"raster",source:"ndre",paint:{"raster-opacity":.8,"raster-fade-duration":0}})}
+ $("lNd").disabled=false;$("lNd").checked=true;vis("ndre",true);
+ s2={id:it.id,date:it.properties.datetime.slice(0,10),cloud:Math.round(it.properties["eo:cloud_cover"]),plot:n?sum/n:null,n:n};
+ st.textContent=s2.date+", "+s2.cloud+"% cloud";
+ }catch(e){st.textContent="Failed";alert("Sentinel-2 load failed: "+e.message)}
+ $("bS2").disabled=false};
+
+/* ---- Treatment-train mass balance ---- */
+function f(x,d){return (+x).toLocaleString(undefined,{maximumFractionDigits:d==null?2:d})}
+function pc(i){return (+$(i).value||0)/100}
+$("bRun").onclick=function(){
+ var R=$("res"),hd="<span class=\"tag\"><b>02</b> RESULTS</span>";
+ if(!closed||m2()<=0){R.innerHTML=hd+"<h2>Evidence brief</h2><div class=\"w b\">Draw and finish a plot on the map first.</div>";return}
+ var c=C[+$("cmp").value],c0=+$("c0").value,dep=+$("dep").value,rho=+$("rho").value,foc=+$("foc").value,th=+$("aTh").value;
+ if(!(c0>=0&&dep>0&&rho>0&&foc>0&&th>0)){R.innerHTML=hd+"<h2>Evidence brief</h2><div class=\"w b\">Enter positive values for concentration, depth, density, organic carbon and water content.</div>";return}
+ var A=m2(),vol=A*dep,soil=vol*rho*1000,M0=c0*soil/1e6,diss=th/(th+rho*Math.pow(10,c[3])*foc);
+ var tr=on("wash")?pc("aT")*M0:0,res=M0-tr,cap=on("sorb")?pc("aC")*tr:0,wat=tr-cap,pr=0;
+ if(on("ec")){var a=pc("aE")*cap,b=pc("aE")*wat;cap-=a;wat-=b;pr+=a+b}
+ if(on("comp")){var k=pc("aK")*res;res-=k;pr+=k}
+ if(on("phyto")){var p=res*Math.min(1,diss*(+$("aN").value||0)*pc("aF"));res-=p;pr+=p}
+ var ver=$("ver").checked,vp=ver?pr:0,un=M0-(res+wat+cap+vp),uf=M0>0?un/M0:0,rf=M0>0?res/M0:0;
+ var rating=Math.abs(uf)>.2?"Capped below high: unaccounted mass exceeds 20% (placeholder tolerance)":(rf<.2?"High, eligible for expert review":(rf<.5?"Moderate":"Low"));
+ var cm=res/soil*1e6,meas=$("meas").value===""?null:+$("meas").value,leg,vd;
+ if(meas===null){leg="Not loaded. Concentration is a user-entered scenario value.";vd="Insufficient: no site measurement to corroborate against."}
+ else{var q=cm>0?meas/cm:Infinity;if(q>=.5&&q<=2){leg="Measurement within a factor of 2 of the model ("+f(meas)+" vs "+f(cm)+" mg/kg).";vd="Partly corroborated: model and measurement agree; literature evidence is screening level only."}else{leg="Measurement differs from the model by more than a factor of 2 ("+f(meas)+" vs "+f(cm)+" mg/kg).";vd="Discordant: review assumptions before relying on this projection."}}
+ var sg=[["Residual soil",res,"var(--c3)"],["Washwater",wat,"var(--c2)"],["Captured on sorbent",cap,"var(--c1)"],["Verified products",vp,"var(--c4)"],["Unaccounted",Math.max(un,0),"var(--bad)"]];
+ var rs=s2.id?(s2.plot!==null?"Sentinel-2 "+s2.date+" ("+s2.cloud+"% cloud): mean red-edge NDRE inside plot "+f(s2.plot,3)+" over "+s2.n+" pixels. A vegetation-stress screening index, not a concentration; confounded by drought, season and species.":"Sentinel-2 "+s2.date+" loaded; redraw the plot, then reload to sample it."):"Not loaded. Use Load Sentinel-2 red edge.";
+ var h=hd+"<h2>"+c[1]+" in "+$("ou").value+"</h2>";
+ if(c[4]&&!on("contain"))h+="<div class=\"w\">"+c[1]+" is volatile and no enclosure is selected. Vapor release is not quantified.</div>";
+ if(on("wash")&&!on("sorb"))h+="<div class=\"w\">Washwater has no sorbent step; uncaptured mass stays in the water stream and needs its own treatment.</div>";
+ if(pr>0&&!ver)h+="<div class=\"w\">Converted mass ("+f(pr,3)+" kg) counts as unaccounted until products are verified by analysis.</div>";
+ h+="<p class=\"cap\">Area "+f(A,0)+" m²; volume "+f(vol,0)+" m³; soil "+f(vol*rho,0)+" tons. Cost: unknown, no pricing inputs loaded. Dissolved fraction "+(diss<.001?"<0.1":f(diss*100,1))+"% (placeholder log Koc "+c[3]+"; replace with a cited value).</p>";
+ h+="<div class=\"bar\">"+sg.map(function(s){return "<div title=\""+s[0]+"\" style=\"width:"+(M0>0?s[1]/M0*100:0)+"%;background:"+s[2]+"\"></div>"}).join("")+"</div>";
+ h+="<table><tr><th>Stream</th><th class=\"n\">kg</th><th class=\"n\">%</th></tr><tr><td>Initial mass</td><td class=\"n\">"+f(M0,3)+"</td><td class=\"n\">100</td></tr>"+sg.map(function(s){return "<tr><td>"+s[0]+"</td><td class=\"n\">"+f(s[1],3)+"</td><td class=\"n\">"+f(M0>0?s[1]/M0*100:0,1)+"</td></tr>"}).join("")+"</table>";
+ h+="<p>Rating: <b>"+rating+"</b></p><div class=\"l3\"><div><b>SITE DATA</b>"+leg+"</div><div><b>REMOTE SENSING</b>"+rs+"</div><div><b>LITERATURE (SCREENING)</b>"+c[5]+" Not evidence of activity at Del Amo.</div><div><b>MODEL</b>Scenario mass balance; residual about "+f(cm,1)+" mg/kg; uncertainty not yet quantified.</div></div><div class=\"w\"><b>"+vd+"</b></div><p class=\"cap\">Efficiencies and the tolerance are scenario assumptions, not site results. Decision support only.</p>";
+ R.innerHTML=h};
+})();
+</script>
+
+<section class="panel" id="horticulture">
+  <span class="tag"><b>03</b> ECOLOGICAL RECONSTITUTION</span>
+  <h2>Horticulture substrate screening</h2>
+  <p class="cap">A transparent screening calculator for comparing candidate reconstituted sediment recipes. It is not a validated plant-growth or contaminant-fate model.</p>
+  <div class="g2">
+    <label class="f">SUBSTRATE pH<input id="h_ph" type="number" min="0" max="14" step=".1" value="6.5"></label>
+    <label class="f">ELECTRICAL CONDUCTIVITY (dS/m)<input id="h_ec" type="number" min="0" step=".1" value="1.0"></label>
+    <label class="f">ORGANIC MATTER (%)<input id="h_om" type="number" min="0" max="100" step=".1" value="3"></label>
+    <label class="f">WATER-HOLDING CAPACITY (%)<input id="h_whc" type="number" min="0" max="100" step="1" value="35"></label>
+    <label class="f">BULK DENSITY (g/cm³)<input id="h_bd" type="number" min=".1" step=".05" value="1.25"></label>
+    <label class="f">GERMINATION BASELINE (%)<input id="h_germ" type="number" min="0" max="100" step="1" value="80"></label>
+    <label class="f">CONTAMINANT SCREENING STATUS<select id="h_cont"><option value="unknown">Not characterized</option><option value="detected">Detected / requires assessment</option><option value="screened">Screened against selected criteria</option></select></label>
+    <label class="f">PLANT FUNCTION<select id="h_plant"><option value="native">Native grass / forb establishment</option><option value="wetland">Wetland emergent vegetation</option><option value="woody">Woody pioneer establishment</option></select></label>
+  </div>
+  <div class="bt"><button class="p" id="h_run">Run substrate screening</button><button id="h_reset">Reset example</button></div>
+  <div id="h_result" class="cap" aria-live="polite">Enter measured substrate properties and run a screening comparison.</div>
+</section>
+
+<section class="panel" id="biochemical-sculpture">
+  <span class="tag"><b>04</b> BIOCHEMICAL KINETIC ART</span>
+  <h2>Carbonate drip sculpture — concept model</h2>
+  <p class="cap">A contained, recirculating art-and-research concept: capture CO₂ from a gas stream, dissolve it into a controlled aqueous carbonate system, then deposit calcium carbonate on a replaceable nucleation scaffold. This is not a claim that soot or other solid carbon particles become limestone.</p>
+  <div class="g2">
+    <label class="f">CO₂ CAPTURED (g/day)<input id="s_co2" type="number" min="0" step="1" value="100"></label>
+    <label class="f">CAPTURE EFFICIENCY (%)<input id="s_eff" type="number" min="0" max="100" step="1" value="70"></label>
+    <label class="f">CALCIUM REAGENT ROUTE<select id="s_route"><option value="lime">Calcium hydroxide (stoichiometric estimate)</option><option value="carbonate">Calcium-rich feed (requires alkalinity balance)</option></select></label>
+  </div>
+  <div class="bt"><button class="p" id="s_run">Estimate mineral deposition</button></div>
+  <div id="s_result" class="cap" aria-live="polite">The estimate assumes captured CO₂ is fully converted to CaCO₃; real conversion, purity, scaling and losses must be measured.</div>
+  <div class="w">Design boundary: keep the mineralization loop physically contained; monitor pH, alkalinity, calcium, conductivity, flow and off-gas CO₂. Do not discharge process water or release captured particulate matter without characterization and treatment.</div>
+</section>
+<script>
+(function(){
+ const el=id=>document.getElementById(id);
+ const n=id=>Number(el(id).value);
+ function clamp(x,a,b){return Math.max(a,Math.min(b,x))}
+ el("h_run")?.addEventListener("click",()=>{
+   const ph=n("h_ph"), ec=n("h_ec"), om=n("h_om"), whc=n("h_whc"), bd=n("h_bd"), germ=n("h_germ");
+   if(![ph,ec,om,whc,bd,germ].every(Number.isFinite)||ph<0||ph>14||ec<0||om<0||om>100||whc<0||whc>100||bd<=0||germ<0||germ>100){
+     el("h_result").textContent="Check inputs: values must be within the stated ranges."; return;
+   }
+   const phScore=clamp(1-Math.abs(ph-6.5)/4.5,0,1);
+   const ecScore=clamp(1-ec/8,0,1);
+   const omScore=clamp(om/5,0,1);
+   const waterScore=clamp(1-Math.abs(whc-40)/60,0,1);
+   const densityScore=clamp(1-Math.max(0,bd-1.0)/1.2,0,1);
+   const composite=100*(.25*phScore+.2*ecScore+.15*omScore+.2*waterScore+.2*densityScore);
+   const germIndex=germ*composite/100;
+   const contaminant=el("h_cont").value;
+   const caveat=contaminant==="unknown"?"Contaminants uncharacterized: horticultural suitability cannot be inferred; obtain soil and tissue analyses.":contaminant==="detected"?"Contaminants detected: evaluate bioavailability, leachate and plant-tissue uptake before any planting decision.":"Screening status selected by user; verify analytes, criteria, sampling coverage and detection limits.";
+   el("h_result").innerHTML="<b>Illustrative substrate-condition index: "+composite.toFixed(1)+"/100</b><br>Illustrative germination-weighted index: "+germIndex.toFixed(1)+" (not a predicted germination rate).<br>"+caveat+"<br><b>Interpretation:</b> compare recipes under identical conditions; validate with replicated germination, biomass, root, tissue and leachate measurements. Index weights are provisional design assumptions, not calibrated species-response functions.";
+ });
+ el("h_reset")?.addEventListener("click",()=>{[["h_ph",6.5],["h_ec",1],["h_om",3],["h_whc",35],["h_bd",1.25],["h_germ",80]].forEach(([i,v])=>el(i).value=v);el("h_cont").value="unknown";el("h_plant").value="native";el("h_result").textContent="Example values restored."});
+ el("s_run")?.addEventListener("click",()=>{
+   const co2=n("s_co2"), eff=n("s_eff")/100;
+   if(!Number.isFinite(co2)||!Number.isFinite(eff)||co2<0||eff<0||eff>1){el("s_result").textContent="Check the CO₂ and capture-efficiency inputs.";return;}
+   const captured=co2*eff, caco3=captured*(100.0869/44.0095), caoh2=captured*(74.0927/44.0095);
+   el("s_result").innerHTML="<b>Captured CO₂ estimate:</b> "+captured.toFixed(1)+" g/day<br><b>Theoretical CaCO₃ deposition:</b> "+caco3.toFixed(1)+" g/day<br><b>Stoichiometric Ca(OH)₂ equivalent:</b> "+caoh2.toFixed(1)+" g/day<br>Actual deposition will be lower or variable because of gas-transfer limits, competing ions, pH, nucleation, dissolution, biomass and maintenance losses. Confirm mineral identity and carbon balance analytically.";
+ });
+})();
+</script>
+
+</body>
+</html>
